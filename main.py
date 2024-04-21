@@ -1,16 +1,43 @@
-# This is a sample Python script.
+#carregando os módulos para a execução do chat
+from chatterbot import ChatBot
+from chatterbot.trainers import ListTrainer
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+# isso aqui só precisa para corrigir o bug
+from spacy.cli import download
+
+#biblioteca da voz
+import pyttsx3
+#carrega a lcasse e inicia
+speak =  pyttsx3.init('sapi5')
+
+download("en_core_web_sm")
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+#classe obrigatória
+class ENGSM:
+    ISO_639_1 = 'en_core_web_sm'
+# Create a new chat bot named Charlie
+chatbot = ChatBot('Jarvis',tagger_language=ENGSM)
+
+trainer = ListTrainer(chatbot)
+
+conversa = trainer.train([
+    "Oi, tudo bem com você?",
+    "Em que posso ajuda -lo?.",
+    "Desculpa, pode repetir por favor!."
+])
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+while True:
+    msg = input('Pergunte ao Jarvis')
+    if msg =="parar":
+        break
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    response = chatbot.get_response(msg)
+
+    #seta a string para ser falada
+    speak.say(response)
+
+    #espera para executar
+    speak.runAndWait()
+    print(response)
